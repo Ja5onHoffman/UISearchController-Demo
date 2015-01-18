@@ -11,6 +11,5 @@
 @interface SearchResultsTableViewController : UITableViewController
 
 @property (nonatomic, strong) NSMutableArray *searchResults;
-@property (nonatomic, strong) NSString *selectedAirline;
 
 @end

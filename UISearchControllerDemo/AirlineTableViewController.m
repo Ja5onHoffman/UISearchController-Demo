@@ -9,7 +9,7 @@
 #import "AirlineTableViewController.h"
 #import "SearchResultsTableViewController.h"
 
-@interface AirlineTableViewController () <UISearchBarDelegate, UISearchControllerDelegate, UISearchResultsUpdating>
+@interface AirlineTableViewController () <UISearchResultsUpdating>
 
 @property (nonatomic, strong) NSArray *airlines;
 @property (nonatomic, strong) UISearchController *searchController;
@@ -46,7 +46,6 @@
                                                        self.searchController.searchBar.frame.size.width, 44.0);
     
     self.tableView.tableHeaderView = self.searchController.searchBar;
-    
 }
 
 - (void)didReceiveMemoryWarning {
@@ -76,32 +75,45 @@
 // Called when the search bar becomes first responder
 - (void)updateSearchResultsForSearchController:(UISearchController *)searchController
 {
+    
+    // Set searchString equal to what's typed into the searchbar
     NSString *searchString = self.searchController.searchBar.text;
+    
     
     [self updateFilteredContentForAirlineName:searchString];
     
+    // If searchResultsController
     if (self.searchController.searchResultsController) {
+        
         UINavigationController *navController = (UINavigationController *)self.searchController.searchResultsController;
         
+        // Present SearchResultsTableViewController as the topViewController
         SearchResultsTableViewController *vc = (SearchResultsTableViewController *)navController.topViewController;
+        
+        // Update searchResults
         vc.searchResults = self.searchResults;
         
+        // And reload the tableView with the new data
         [vc.tableView reloadData];
     }
 }
 
 
+// Update self.searchResults based on searchString, which is the argument in passed to this method
 - (void)updateFilteredContentForAirlineName:(NSString *)airlineName
 {
     
     if (airlineName == nil) {
+        
+        // If empty the search results are the same as the original data
         self.searchResults = [self.airlines mutableCopy];
     } else {
         
         NSMutableArray *searchResults = [[NSMutableArray alloc] init];
         
+        // Else if the airline's name is
         for (NSDictionary *airline in self.airlines) {
-            if ([airline[@"Name"] containsString:airlineName] /*|| [airline[@"ICAO"] containsString:[airlineName uppercaseString]]*/) {
+            if ([airline[@"Name"] containsString:airlineName]) {
                 
                 NSString *str = [NSString stringWithFormat:@"%@", airline[@"Name"] /*, airline[@"icao"]*/];
                 [searchResults addObject:str];
